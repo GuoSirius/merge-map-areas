@@ -136,9 +136,9 @@
       };
 
       function exportHandler() {
-        const geoString = JOSN.stringify(geoData)
+        const geoString = JSON.stringify(geoData)
 
-        const blob = new Blob([geoString])
+        const blob = new Blob([geoString], { type: 'application/json;charset=utf-8' })
 
         saveAs(blob)
       }
