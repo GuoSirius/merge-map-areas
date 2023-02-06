@@ -52,6 +52,8 @@
       <button id="btn-select" style="display: block" onclick="onSelectArea()">
         选择区域合并
       </button>
+      <button onclick="exportHandler()">导出</button>
+
       <div id="on-select-tools">
         <input id="input-area" placeholder="请输入合并区域名称" type ="text"/>
         <button onclick="mergeArea()">合并</button>
@@ -132,6 +134,14 @@
         console.log("cancel");
         myChart.off("click");
       };
+
+      function exportHandler() {
+        const geoString = JOSN.stringify(geoData)
+
+        const blob = new Blob([geoString])
+
+        saveAs(blob)
+      }
     </script>
   </body>
 </html>
