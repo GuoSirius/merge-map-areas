@@ -138,7 +138,7 @@
       function exportHandler() {
         const geoString = JSON.stringify(geoData)
 
-        const blob = new Blob([geoString], { type: 'application/json;charset=utf-8' })
+        const blob = new Blob([geoString], 'map.json', { type: 'application/json;charset=utf-8' })
 
         saveAs(blob)
       }
