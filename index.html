@@ -12,6 +12,7 @@
 
     <script src="echarts.min.js"></script>
     <script src="FileSaver.js"></script>
+    <script src="qs.js"></script>
 
     <style>
       *{
@@ -61,14 +62,17 @@
       </div>
     </div>
     <script>
+      const queryString = Qs.parse(location.search.slice(1))
+
       const request = (url) => fetch(url).then((res) => res.json());
       const chartDom = document.getElementById("container");
       const selectBtn = document.getElementById("btn-select");
       const selectTools = document.getElementById("on-select-tools")
       const inputDom = document.getElementById("input-area");
+
       var geoData;
       var myChart = echarts.init(chartDom);
-      request("./geo/100000_full.json").then((res) => {
+      request(queryString.areaUrl || "./geo/100000_full.json").then((res) => {
         geoData = res;
         console.log(res);
         echarts.registerMap("testMap", res);
@@ -85,23 +89,28 @@
       });
 
       const mergeArea = () => {
+        let firstArea = null
         const names = Object.keys(myChart.getOption().series[0].selectedMap);
         console.log('已选中区域',names)
         const polygons = [];
         geoData.features = geoData.features.filter((i) => {
           let tempFlag = true;
           names.forEach((n) => {
-            if (i.properties.name.includes(n)) {
+            if (i.properties.name === n) {
               tempFlag = false;
               const points = i.geometry.coordinates;
               console.log(points);
               polygons.push(turf.multiPolygon(points));
+
+              if (!firstArea) firstArea = i
             }
           });
           return tempFlag;
         });
         let unionGeo = polygons.reduce((pre, cur) => turf.union(pre, cur)); // union只支持两个参数，当选择多个多边形时需要重复合并
-        unionGeo.properties.name = inputDom.value || '自定义区域'
+        firstArea.features = unionGeo.features
+        unionGeo = firstArea
+        unionGeo.properties.name = inputDom.value || unionGeo.properties.name
         geoData.features.push(unionGeo);
         echarts.registerMap("new Map", geoData);
         myChart.setOption({
