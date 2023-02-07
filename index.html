@@ -112,7 +112,7 @@
         unionGeo.geometry.type = firstArea.geometry.type
         unionGeo.properties.name = inputDom.value || unionGeo.properties.name
         geoData.features.push(unionGeo);
-        const mapName = unionGeo.properties.name || "new Map"
+        const mapName = Date.now() // unionGeo.properties.name || "new Map"
         echarts.registerMap(mapName, geoData);
         myChart.setOption({
           series:[{
