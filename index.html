@@ -108,14 +108,15 @@
         });
         let unionGeo = polygons.reduce((pre, cur) => turf.union(pre, cur)); // union只支持两个参数，当选择多个多边形时需要重复合并
         console.log(unionGeo)
-        // firstArea.features = unionGeo.features
-        // unionGeo = firstArea
+        unionGeo.properties = firstArea.properties
+        unionGeo.geometry.type = firstArea.geometry.type
         unionGeo.properties.name = inputDom.value || unionGeo.properties.name
         geoData.features.push(unionGeo);
-        echarts.registerMap("new Map", geoData);
+        const mapName = unionGeo.properties.name || "new Map"
+        echarts.registerMap(mapName, geoData);
         myChart.setOption({
           series:[{
-            map:"new Map"
+            map: mapName
           }]
         })
         cancelSelectArea()
